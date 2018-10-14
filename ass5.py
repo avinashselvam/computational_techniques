@@ -37,4 +37,51 @@ def q1():
 #     plt.gca().legend(('0.1', '0.01', '0.001', '0.0001', '0.00001'))
 #     plt.show()
         
-q1()
+def f2(x):
+    return x**2
+
+def trapezoid(a, b, h=0.1, f=f2):
+    I = 0
+    I += f(a) + f(b)
+    for each in np.arange(a + h, b, h):
+        I += 2 * f(each)
+    return (h/2)*I
+
+def simpson(a, b, h=0.5, f=f2):
+    I = 0
+    I += f(a) + f(b)
+    for each in np.arange(a + 2*h, b, 2*h):
+        I += 2 * f(each)
+    for each in np.arange(a + h, b, 2*h):
+        I += 4 * f(each)
+    return (h/3)*I
+
+def gauss_2(a, b, f=f2):
+    c, d = b - a, b + a
+    t = lambda x: -((x * c) - d) / 2
+    x0 = (1/3)**0.5
+    I = f(t(-x0)) + f(t(x0))
+    return I*(c/2)
+
+def gauss_3(a, b, f=f2):
+    c, d = b - a, b + a
+    t = lambda x: -((x * c) - d) / 2
+    x0 = (3 / 5)** 0.5
+    I = (5*f(t(-x0)) + 5*f(t(x0)) + 8*f(t(0)))/9
+    return I * (c / 2)
+
+def adaptive(a, b):
+    i = 0
+    converged = False
+    prev = 0
+    while not converged:
+        h = (b - a) / (2**i)
+        I = simpson(a, b, h)
+        converged = abs(I - prev) < 0.0001
+        prev = I
+    return I
+
+def q2():
+    for fn in [trapezoid, simpson, gauss_2, gauss_3, adaptive]:
+        print(fn(0, 2))
+
