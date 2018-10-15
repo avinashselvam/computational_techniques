@@ -5,7 +5,7 @@ def f1(x):
     return x ** 2
 
 def der_h4(x, h, f=f1):
-    return (-f(x + 2 * h) + 8 * f(x + h) - 8 * f(x - h) + f(x - 2 * h)) / 12 * h
+    return (-f(x + 2 * h) + 8 * f(x + h) - 8 * f(x - h) + f(x - 2 * h)) / (12 * h)
     
 def der_h1(x, h, f=f1):
     forward = (f(x + h) - f(x)) / h
@@ -23,19 +23,20 @@ def q1():
             h1 = der_h1(x, h)
             hf.append(h1[0])
             hb.append(h1[1])
+        
+        # comparing h4, forward, backeard for different h
         plt.plot(xs, h4); plt.plot(xs, hf); plt.plot(xs, hb)
         plt.title("comparision")
         plt.gca().legend(("h4", "h1 forward", "h1 backward"))
-        plt.xlabel("x")
-        plt.ylabel("derivative")
-        plt.show()
+        plt.xlabel("x"); plt.ylabel("derivative"); plt.show()
+
         h4s.append(h4)
-#     plt.plot(xs, h4[:100], h4[100:200], h4[200:300], h4[300:400], h4[400:500])
-#     plt.title("different h")
-#     plt.xlabel("x")
-#     plt.ylabel("derivative")
-#     plt.gca().legend(('0.1', '0.01', '0.001', '0.0001', '0.00001'))
-#     plt.show()
+
+    # comparing different h
+    for i in range(5): plt.plot(xs, h4s[i])
+    plt.title("different h")
+    plt.gca().legend(('0.5', '0.25', '0.2', '0.1', '0.01'))
+    plt.xlabel("x"); plt.ylabel("derivative"); plt.show()
         
 def f2(x):
     return x**2
@@ -84,4 +85,3 @@ def adaptive(a, b):
 def q2():
     for fn in [trapezoid, simpson, gauss_2, gauss_3, adaptive]:
         print(fn(0, 2))
-
