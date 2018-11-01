@@ -3,7 +3,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 
+F1_CALLED = 0
+F2_CALLED = 0
+
 def f1(x):
+    global F1_CALLED
+    F1_CALLED += 1
     return x ** 2
 
 def der_h4(x, h, f=f1):
@@ -63,6 +68,8 @@ def q1():
 
         
 def f2(x):
+    global F2_CALLED
+    F2_CALLED += 1
     return x**2
 
 def trapezoid(a, b, h=0.1, f=f2):
@@ -112,9 +119,15 @@ def adaptive(a, b, epsilon=2, i=0, f=f2):
 
 def q2():
     for fn in [trapezoid, simpson, gauss_2, gauss_3, adaptive]:
+        global F1_CALLED
+        F1_CALLED = 0
+        global F2_CALLED
+        F2_CALLED = 0
         start = time.time()
         print(fn(0, 2))
         end = time.time()
-        print("time taken for {} : {}".format(str(fn) ,end-start))
+        # print("time taken for {} : {}".format(str(fn) ,end-start))
+        print("number of function calls for {} : {}".format(str(fn), F2_CALLED))
+
 
 q2()
