@@ -161,29 +161,85 @@ def q2b():
     surf = ax.contour(X, Y, u, cmap=cm.coolwarm, antialiased=True)
     plt.show()
 
-h = 0.025
-k = 0.025
+def q1(method=5, w=1.4):
+    h = 0.025
+    k = 0.025
 
-NUM_ROWS = int(1.0 / h)  # for x
-NUM_COLS = int(1.0 / k)  # for y
+    ITERATIONS = range(10)
 
-# NUM_COLS = 4
-# NUM_ROWS = 4
+    NUM_ROWS = int(1.0 / h)  # for x
+    NUM_COLS = int(1.0 / k)  # for y
 
-# x is colums
-# y is rows
+    # NUM_COLS = 4
+    # NUM_ROWS = 4
 
-u = np.zeros((NUM_ROWS, NUM_COLS))
+    # x is colums
+    # y is rows
 
-num_points = NUM_COLS * NUM_ROWS
+    u = np.zeros((NUM_ROWS, NUM_COLS))
 
-A = np.zeros((num_points, num_points))
+    # init conditions
+    u[0, :] = 100
+    u[:, 0] = 100
 
-dx, dy = NUM_COLS, NUM_ROWS
+    if DEBUG: print("Applying 100\n", u.T)
 
-p = b = np.zeros((num_points))
-
-for i in range(1,dy-1):
-    for j in range(1,dx-1):
-        at_point = k = i*dx + j
+    for _ in ITERATIONS:
+        for i in range(1,NUM_ROWS-1):
+            for j in range(1, NUM_COLS - 1):
+                prev = u[i,j]
+                if method == 5:
+                    u[i, j] = (u[i - 1, j] + u[i, j + 1] + u[i + 1, j] + u[i, j - 1]) / 4
+                else:
+                    u[i, j] = (u[i - 1, j] + u[i, j + 1] + u[i + 1, j] + u[i, j - 1]
+                            + u[i - 1, j + 1] + u[i + 1, j + 1] + u[i + 1, j - 1] + u[i - 1, j - 1]) / 8
+                    
+                u[i, j] = w * u[i, j] + (1 - w) * prev
         
+        i = NUM_ROWS - 1
+        for j in range(1, NUM_COLS - 1):
+            prev = u[i,j]
+            if method == 5:
+                u[i, j] = (2*u[i - 1, j] + u[i, j + 1] + u[i, j - 1]) / 4
+            else:
+                u[i, j] = (2*u[i - 1, j] + u[i, j + 1] + u[i, j - 1]
+                        + 2*u[i - 1, j + 1] + 2*u[i - 1, j - 1]) / 8
+                
+            u[i, j] = w * u[i, j] + (1 - w) * prev
+        
+        j = NUM_COLS - 1
+        for i in range(1, NUM_ROWS - 1):
+            prev = u[i,j]
+            if method == 5:
+                u[i, j] = (u[i - 1, j] + u[i + 1, j] + 2*u[i, j - 1]) / 4
+            else:
+                u[i, j] = (u[i - 1, j] + u[i + 1, j] + 2*u[i, j - 1]
+                            + 2*u[i + 1, j - 1] + 2*u[i - 1, j - 1]) / 8
+                
+            u[i, j] = w * u[i, j] + (1 - w) * prev
+        
+        i, j = NUM_ROWS - 1, NUM_COLS - 1
+        if method == 5:
+            u[i, j] = (2 * u[i - 1, j] +  2 * u[i, j - 1]) / 4
+        else:
+            u[i, j] = (2 * u[i - 1, j] + 2 * u[i, j - 1] + 4 * u[i - 1, j - 1]) / 8
+        
+        if DEBUG: print("After solving for all points\n", u.T)
+
+    # surface plot
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    x = np.arange(0, NUM_COLS, 1)
+    y = np.arange(0, NUM_ROWS, 1)
+    plt.xlabel("time"); plt.ylabel("x"); plt.title("Heat equation solution")
+    X, Y = np.meshgrid(x, y)
+    surf = ax.plot_surface(X, Y, u, rstride=1, cstride=1, cmap=cm.coolwarm, antialiased=True)
+    plt.show()
+
+    # contour plot
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    surf = ax.contour(X, Y, u, cmap=cm.coolwarm, antialiased=True)
+    plt.show()       
+
+q1()
