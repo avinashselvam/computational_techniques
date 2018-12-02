@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
-
 from scipy.linalg import solve
+from time import time
 
 np.set_printoptions(3)
 DEBUG = False
@@ -65,15 +65,13 @@ def q3():
 
 def q2():
     NUM_ROWS = 25
-    NUM_COLS = 30
+    NUM_COLS = 300
 
     c = 1
     k = 0.1 / NUM_COLS # for t
     h = 1 / NUM_ROWS # for x
 
     r = (c ** 2) * k / (h ** 2)
-
-    r = 1
 
     if r >= 0.5: print("Unstable r >= 0.5\n")
 
@@ -108,15 +106,13 @@ def q2():
 
 def q2b():
     NUM_ROWS = 25
-    NUM_COLS = 30
+    NUM_COLS = 300
 
     c = 1
     k = 0.1 / NUM_COLS # for t
     h = 1 / NUM_ROWS # for x
 
     r = (c ** 2) * k / (h ** 2)
-
-    r = 1
 
     if r >= 0.5: print("Unstable r >= 0.5\n")
 
@@ -162,10 +158,11 @@ def q2b():
     plt.show()
 
 def q1(method=5, w=1.4):
+    start = time()
     h = 0.025
     k = 0.025
 
-    ITERATIONS = range(10)
+    ITERATIONS = range(100)
 
     NUM_ROWS = int(1.0 / h)  # for x
     NUM_COLS = int(1.0 / k)  # for y
@@ -240,6 +237,9 @@ def q1(method=5, w=1.4):
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     surf = ax.contour(X, Y, u, cmap=cm.coolwarm, antialiased=True)
-    plt.show()       
+    plt.show()
+
+    end = time()
+    print("time taken : {}".format((end-start)*0.001))       
 
 q1()
